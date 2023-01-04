@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:joro/song.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    List<Song> song = Song.songs;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -40,11 +42,22 @@ class MainScreen extends StatelessWidget {
         body: SingleChildScrollView(
           child: Column(
             children: [
-              _DiscoverMusic(),
+              const _DiscoverMusic(),
               Column(
                 children: [
                   _HeaderSection(
                     title: 'Trending Music',
+                  ),
+                  Container(
+                    padding: const EdgeInsets.only(left: 20, bottom: 20),
+                    height: MediaQuery.of(context).size.height * 0.27,
+                    child: ListView.builder(
+                        scrollDirection: Axis.horizontal,
+                        shrinkWrap: true,
+                        itemCount: song.length,
+                        itemBuilder: (context, index) {
+                          return SongCard(song: song[index]);
+                        }),
                   ),
                 ],
               )
@@ -53,6 +66,77 @@ class MainScreen extends StatelessWidget {
         ),
         bottomNavigationBar: const _BottomNavigation(),
       ),
+    );
+  }
+}
+
+class SongCard extends StatelessWidget {
+  const SongCard({
+    Key? key,
+    required this.song,
+  }) : super(key: key);
+
+  final Song song;
+
+  @override
+  Widget build(BuildContext context) {
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        Container(
+          width: MediaQuery.of(context).size.width * 0.45,
+          decoration: BoxDecoration(
+            image: DecorationImage(
+                image: AssetImage(song.coverUrl), fit: BoxFit.cover),
+            borderRadius: BorderRadius.circular(15),
+          ),
+          margin: EdgeInsets.only(right: 15),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width * 0.35,
+          height: 50,
+          margin: EdgeInsets.only(bottom: 10),
+          decoration: BoxDecoration(
+            color: Colors.white.withOpacity(0.8),
+            borderRadius: BorderRadius.circular(10),
+          ),
+          child: Row(
+            children: [
+              Expanded(
+                flex: 3,
+                child: Padding(
+                  padding: const EdgeInsets.all(3.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        song.title,
+                        style: TextStyle(
+                          color: Colors.deepPurple.shade800,
+                          fontWeight: FontWeight.w900,
+                        ),
+                      ),
+                      Text(
+                        song.description,
+                        style: TextStyle(
+                          overflow: TextOverflow.ellipsis,
+                          color: Colors.deepPurple.shade500,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Expanded(
+                child: Icon(
+                  Icons.play_circle_fill_rounded,
+                  color: Colors.deepPurple.shade800,
+                ),
+              )
+            ],
+          ),
+        )
+      ],
     );
   }
 }
