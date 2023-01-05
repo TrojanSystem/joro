@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:joro/playList.dart';
 import 'package:joro/song.dart';
+import 'package:joro/song_screen.dart';
 
 class MainScreen extends StatelessWidget {
   const MainScreen({Key? key}) : super(key: key);
@@ -7,6 +9,7 @@ class MainScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     List<Song> song = Song.songs;
+    List<PlayList> playList = PlayList.playList;
     return Container(
       decoration: BoxDecoration(
         gradient: LinearGradient(
@@ -52,12 +55,81 @@ class MainScreen extends StatelessWidget {
                     padding: const EdgeInsets.only(left: 20, bottom: 20),
                     height: MediaQuery.of(context).size.height * 0.27,
                     child: ListView.builder(
-                        scrollDirection: Axis.horizontal,
-                        shrinkWrap: true,
-                        itemCount: song.length,
-                        itemBuilder: (context, index) {
-                          return SongCard(song: song[index]);
-                        }),
+                      scrollDirection: Axis.horizontal,
+                      shrinkWrap: true,
+                      itemCount: song.length,
+                      itemBuilder: (context, index) {
+                        return SongCard(song: song[index]);
+                      },
+                    ),
+                  ),
+                  _HeaderSection(
+                    title: 'Playlists',
+                  ),
+                  ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: playList.length,
+                    itemBuilder: (context, index) => Container(
+                      decoration: BoxDecoration(
+                        color: Colors.deepPurple.shade800,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      margin: const EdgeInsets.all(5),
+                      height: 80,
+                      width: MediaQuery.of(context).size.width * 0.35,
+                      child: Row(
+                        children: [
+                          Expanded(
+                            flex: 1,
+                            child: Container(
+                              margin: const EdgeInsets.all(15),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(15),
+                                image: DecorationImage(
+                                  image: NetworkImage(playList[index].imageUrl),
+                                  fit: BoxFit.cover,
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                              flex: 2,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    playList[index].title,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.w900,
+                                    ),
+                                  ),
+                                  const SizedBox(
+                                    height: 5,
+                                  ),
+                                  Text(
+                                    '${playList.length} songs',
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontWeight: FontWeight.normal,
+                                    ),
+                                  ),
+                                ],
+                              )),
+                          Expanded(
+                            flex: 2,
+                            child: IconButton(
+                              onPressed: () {},
+                              icon: const Icon(
+                                Icons.play_circle_fill_rounded,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
                 ],
               )
@@ -128,8 +200,17 @@ class SongCard extends StatelessWidget {
                 ),
               ),
               Expanded(
-                child: Icon(
-                  Icons.play_circle_fill_rounded,
+                child: IconButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => SongScreen(song: song),
+                      ),
+                    );
+                  },
+                  icon: const Icon(
+                    Icons.play_circle_fill_rounded,
+                  ),
                   color: Colors.deepPurple.shade800,
                 ),
               )
